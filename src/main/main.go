@@ -48,13 +48,13 @@ func bubbleSortAnalysis(testData []int) []time.Duration {
 
 	for i := 0; i < len(durations); i++ {
 		start := time.Now()
-		bubblesort(testData)
+		bubbleSort(testData)
 		durations[i] = time.Since(start)
 	}
 	return durations
 }
 
-func main() {
+func measure() (durationResults, durationResults, durationResults) {
 	genDataBinSearch()
 	genDataIsPrime()
 	genDataBubbleSort()
@@ -74,15 +74,29 @@ func main() {
 	worstResBubbleSort := bubbleSortAnalysis(bubbleSortTestData.worstCase)
 	resultsBubbleSort := durationResults{bestResBubbleSort, avgResBubbleSort, worstResBubbleSort}
 
-	fmt.Println(binSearchString, bestCaseString, resultsBinSearch.bestCase)
-	fmt.Println(binSearchString, avgCaseString, resultsBinSearch.avgCase)
-	fmt.Println(binSearchString, worstCaseString, resultsBinSearch.worstCase)
+	return resultsBinSearch, resultsIsPrime, resultsBubbleSort
+}
 
-	fmt.Println(isPrimeString, bestCaseString, resultsIsPrime.bestCase)
-	fmt.Println(isPrimeString, avgCaseString, resultsIsPrime.avgCase)
-	fmt.Println(isPrimeString, worstCaseString, resultsIsPrime.worstCase)
+func genAverage(durations []time.Duration) (average time.Duration) {
+	for i := 0; i < len(durations); i++ {
+		average += durations[i]
+	}
+	tempAvg := float64(average) / float64(len(durations))
+	return time.Duration(tempAvg)
+}
 
-	fmt.Println(bubbleSortString, bestCaseString, resultsBubbleSort.bestCase)
-	fmt.Println(bubbleSortString, avgCaseString, resultsBubbleSort.avgCase)
-	fmt.Println(bubbleSortString, worstCaseString, resultsBubbleSort.worstCase)
+func main() {
+	binSearchDurations, isPrimeDurations, bubbleSortDurations := measure()
+
+	fmt.Println(binSearchString, bestCaseString, genAverage(binSearchDurations.bestCase))
+	fmt.Println(binSearchString, avgCaseString, genAverage(binSearchDurations.avgCase))
+	fmt.Println(binSearchString, worstCaseString, genAverage(binSearchDurations.worstCase))
+
+	fmt.Println(isPrimeString, bestCaseString, genAverage(isPrimeDurations.bestCase))
+	fmt.Println(isPrimeString, avgCaseString, genAverage(isPrimeDurations.avgCase))
+	fmt.Println(isPrimeString, worstCaseString, genAverage(isPrimeDurations.worstCase))
+
+	fmt.Println(bubbleSortString, bestCaseString, genAverage(bubbleSortDurations.bestCase))
+	fmt.Println(bubbleSortString, avgCaseString, genAverage(bubbleSortDurations.avgCase))
+	fmt.Println(bubbleSortString, worstCaseString, genAverage(bubbleSortDurations.worstCase))
 }
