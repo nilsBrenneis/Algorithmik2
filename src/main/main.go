@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -54,31 +53,40 @@ func genAverage(durations []time.Duration) time.Duration {
 	return time.Duration(float64(accu) / float64(len(durations)))
 }
 
+func createBubbleSortPlot() {
+	testData := genDataBubbleSort()
+
+	durationsBestCase := measureBubbleSort(testData.bestCase)
+	durationsAvgCase := measureBubbleSort(testData.avgCase)
+	durationsWorstCase := measureBubbleSort(testData.worstCase)
+
+	saveBubbleSortPlot(makePlotable(durationsBestCase), makePlotable(durationsAvgCase),
+		makePlotable(durationsWorstCase))
+}
+
+func createIsPrimePlot() {
+	testData := genDataIsPrime()
+
+	durationsBestCase := measureIsPrimeRun(testData.bestCase)
+	durationsAvgCase := measureIsPrimeRun(testData.avgCase)
+	durationsWorstCase := measureIsPrimeRun(testData.worstCase)
+
+	saveIsPrimePlot(durationsBestCase, durationsAvgCase, durationsWorstCase, testData)
+}
+
+func createBinSearchPlot() {
+	testData := genDataBinSearch()
+
+	durationsBestCase := measureBinSearchRun(testData.arr, testData.bestCaseKey)
+	durationsAvgCase := measureBinSearchRun(testData.arr, testData.avgCaseKey)
+	durationsWorstCase := measureBinSearchRun(testData.arr, testData.worstCaseKey)
+
+	saveBinSearchPlot(durationsBestCase, durationsAvgCase, durationsWorstCase, testData)
+}
+
+//https://github.com/gonum/plot/
 func main() {
-	bubbleSortTestData := genDataBubbleSort()
-
-	durationsBestCaseBubbleSort := measureBubbleSort(bubbleSortTestData.bestCase)
-	durationsAvgCaseubbleSort := measureBubbleSort(bubbleSortTestData.avgCase)
-	durationsWorstCaseubbleSort := measureBubbleSort(bubbleSortTestData.worstCase)
-	fmt.Println(durationsBestCaseBubbleSort)
-	fmt.Println(durationsAvgCaseubbleSort)
-	fmt.Println(durationsWorstCaseubbleSort)
-
-	isPrimeTestData := genDataIsPrime()
-
-	durationsBestCaseIsPrime := measureIsPrimeRun(isPrimeTestData.bestCase)
-	durationsAvgCaseIsPrime := measureIsPrimeRun(isPrimeTestData.avgCase)
-	durationsWorstCaseIsPrime := measureIsPrimeRun(isPrimeTestData.worstCase)
-	fmt.Println(durationsBestCaseIsPrime)
-	fmt.Println(durationsAvgCaseIsPrime)
-	fmt.Println(durationsWorstCaseIsPrime)
-
-	binSearchTestData := genDataBinSearch()
-
-	durationsBestCaseBinSearch := measureBinSearchRun(binSearchTestData.arr, binSearchTestData.bestCaseKey)
-	durationsAvgCaseBinSearch := measureBinSearchRun(binSearchTestData.arr, binSearchTestData.avgCaseKey)
-	durationsWorstCaseBinSearch := measureBinSearchRun(binSearchTestData.arr, binSearchTestData.worstCaseKey)
-	fmt.Println(durationsBestCaseBinSearch)
-	fmt.Println(durationsAvgCaseBinSearch)
-	fmt.Println(durationsWorstCaseBinSearch)
+	createBubbleSortPlot()
+	createIsPrimePlot()
+	createBinSearchPlot()
 }
