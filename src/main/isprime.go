@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-func isPrime(value int) (bool, int) {
+func isPrime(value int) bool {
 	n := float64(value)
 	prim := true
 	k := 2.0
@@ -14,5 +14,5 @@ func isPrime(value int) (bool, int) {
 		}
 		k++
 	}
-	return prim, value
+	return prim
 }

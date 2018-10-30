@@ -1,23 +1,32 @@
 package main
 
+//https://github.com/gonum/plot/
 import (
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/plotutil"
 	"gonum.org/v1/plot/vg"
-	"strconv"
+	"math"
 	"time"
 )
 
-func saveBubbleSortPlot(bestCase plotter.XYs, avgCase plotter.XYs, worstCase plotter.XYs) {
+func saveBubbleSortPlot(bestCase plotter.XYs, avgCase plotter.XYs, worstCase plotter.XYs, log10 bool) {
+	var filename string
 	p, err := plot.New()
 	if err != nil {
 		panic(err)
 	}
 
 	p.Title.Text = "Laufzeitverhalten Bubble Sort-Algorithmus"
-	p.X.Label.Text = "Problemgröße - Elemente im Array"
-	p.Y.Label.Text = "benötigte Zeit - ns"
+	if log10 {
+		p.X.Label.Text = "Problemgröße - Log10(Elemente im Array)"
+		p.Y.Label.Text = "benötigte Zeit - Log10(ns)"
+		filename = "bubbleSortLog"
+	} else {
+		p.X.Label.Text = "Problemgröße - Elemente im Array"
+		p.Y.Label.Text = "benötigte Zeit - ns"
+		filename = "bubbleSort"
+	}
 
 	err = plotutil.AddLinePoints(p,
 		"best case", bestCase,
@@ -27,74 +36,95 @@ func saveBubbleSortPlot(bestCase plotter.XYs, avgCase plotter.XYs, worstCase plo
 		panic(err)
 	}
 
-	if err := p.Save(10*vg.Inch, 10*vg.Inch, "bubble.png"); err != nil {
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, filename+".png"); err != nil {
 		panic(err)
 	}
 }
 
-func saveIsPrimePlot(bestCase time.Duration, avgCase time.Duration, worstCase time.Duration, primes isPrimeStruct) {
-	durations := plotter.Values{float64(bestCase), float64(avgCase), float64(worstCase)}
-
+func saveBinSearchPlot(durations plotter.XYs) {
 	p, err := plot.New()
 	if err != nil {
 		panic(err)
 	}
-	p.Title.Text = "Prime-Algorithmus"
-	p.X.Label.Text = "Primzahl"
-	p.Y.Label.Text = "Laufzeit - ns"
 
-	w := vg.Points(20)
+	p.Title.Text = "Laufzeitverhalten binary Search-Algorithmus"
+	p.X.Label.Text = "gesuchtes Element"
+	p.Y.Label.Text = "benötigte Zeit - ns"
 
-	bars, err := plotter.NewBarChart(durations, w)
+	err = plotutil.AddLinePoints(p, durations)
 	if err != nil {
 		panic(err)
 	}
 
-	bars.LineStyle.Width = vg.Length(0)
-	bars.Color = plotutil.Color(0)
-
-	p.Add(bars)
-	p.NominalX("best case "+strconv.Itoa(primes.bestCase), "average case "+strconv.Itoa(primes.avgCase), "worst case "+strconv.Itoa(primes.worstCase))
-
-	if err := p.Save(10*vg.Inch, 10*vg.Inch, "isPrime.png"); err != nil {
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, "binSearch.png"); err != nil {
 		panic(err)
 	}
 }
 
-func saveBinSearchPlot(bestCase time.Duration, avgCase time.Duration, worstCase time.Duration, keys binSearchStruct) {
-	durations := plotter.Values{float64(bestCase), float64(avgCase), float64(worstCase)}
-
+func saveIsPrimePlot(durations plotter.XYs, log10 bool) {
+	var filename string
 	p, err := plot.New()
 	if err != nil {
 		panic(err)
 	}
-	p.Title.Text = "Binary Search-Algorithmus"
-	p.X.Label.Text = "Key"
-	p.Y.Label.Text = "Laufzeit - ns"
 
-	w := vg.Points(20)
+	p.Title.Text = "Laufzeitverhalten is Prime-Algorithmus"
+	if log10 {
+		p.X.Label.Text = "Problemgröße - Log10(Größe der Primzahl)"
+		p.Y.Label.Text = "benötigte Zeit - Log10(ns)"
+		filename = "isPrimeLog"
+	} else {
+		p.X.Label.Text = "Problemgröße - Größe der Primzahl"
+		p.Y.Label.Text = "benötigte Zeit - ns"
+		filename = "isPrime"
+	}
 
-	bars, err := plotter.NewBarChart(durations, w)
+	err = plotutil.AddLinePoints(p, durations)
 	if err != nil {
 		panic(err)
 	}
 
-	bars.LineStyle.Width = vg.Length(0)
-	bars.Color = plotutil.Color(0)
-
-	p.Add(bars)
-	p.NominalX("best case "+strconv.Itoa(keys.bestCaseKey), "average case "+strconv.Itoa(keys.avgCaseKey), "worst case "+strconv.Itoa(keys.worstCaseKey))
-
-	if err := p.Save(4*vg.Inch, 6*vg.Inch, "binSearch.png"); err != nil {
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, filename+".png"); err != nil {
 		panic(err)
 	}
 }
 
-func makePlotable(data []time.Duration) plotter.XYs {
-	plotableData := make(plotter.XYs, len(data))
-	for i := range data {
+func makeBubbleSortDataPlotable(durations []time.Duration) plotter.XYs {
+	plotableData := make(plotter.XYs, len(durations))
+	for i := range durations {
 		plotableData[i].X = float64(i)
-		plotableData[i].Y = float64(data[i])
+		plotableData[i].Y = float64(durations[i])
 	}
 	return plotableData
+}
+
+func makeBinSearchDataPlotable(durations []time.Duration, keys []int) plotter.XYs {
+	plotableData := make(plotter.XYs, len(durations))
+
+	if len(durations) != len(keys) {
+		return plotableData
+	}
+
+	for i := range durations {
+		plotableData[i].X = float64(keys[i])
+		plotableData[i].Y = float64(durations[i])
+	}
+	return plotableData
+}
+
+func transformToLog10(plotData plotter.XYs) plotter.XYs {
+	for i := range plotData {
+		if plotData[i].X == 0 {
+			plotData[i].X = 0
+		} else {
+			plotData[i].X = math.Log10(plotData[i].X)
+		}
+		if plotData[i].X == 0 {
+			plotData[i].Y = 0
+		} else {
+			plotData[i].Y = math.Log10(plotData[i].Y)
+		}
+
+	}
+	return plotData
 }

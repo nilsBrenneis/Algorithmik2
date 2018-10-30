@@ -5,16 +5,8 @@ import (
 )
 
 type binSearchStruct struct {
-	bestCaseKey  int
-	avgCaseKey   int
-	worstCaseKey int
-	arr          []int
-}
-
-type isPrimeStruct struct {
-	bestCase  int
-	avgCase   int
-	worstCase int
+	keys []int
+	arr  []int
 }
 
 type bubbleSortStruct struct {
@@ -23,34 +15,27 @@ type bubbleSortStruct struct {
 	worstCase []int
 }
 
-var binSearchTestData binSearchStruct
-
-var isPrimeTestData isPrimeStruct
-
 func genDataBinSearch() binSearchStruct {
-	arrLen := 1000
+	arrLen := 100000000
+	key := arrLen
+	var binSearchTestData binSearchStruct
 	binSearchTestData.arr = make([]int, arrLen)
+	binSearchTestData.keys = make([]int, 26)
 
 	for i := 0; i < len(binSearchTestData.arr); i++ {
 		binSearchTestData.arr[i] = i
 	}
 
-	binSearchTestData.bestCaseKey = 500
-	binSearchTestData.avgCaseKey = 999
-	binSearchTestData.worstCaseKey = 250
+	for i := range binSearchTestData.keys {
+		key = key / 2
+		binSearchTestData.keys[i] = key
+	}
 	return binSearchTestData
-}
-
-func genDataIsPrime() isPrimeStruct {
-	isPrimeTestData.bestCase = 1
-	isPrimeTestData.avgCase = 65539
-	isPrimeTestData.worstCase = 213849
-	return isPrimeTestData
 }
 
 func genDataBubbleSort() bubbleSortStruct {
 	arrLen := 1000
-	maxRandInt := 2000
+	maxRandInt := arrLen * 2
 	var bubbleSortTestData bubbleSortStruct
 	bubbleSortTestData.bestCase = make([]int, arrLen)
 	bubbleSortTestData.avgCase = make([]int, arrLen)
