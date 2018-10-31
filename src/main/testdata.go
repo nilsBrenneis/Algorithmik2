@@ -20,13 +20,13 @@ func genDataBinSearch() binSearchStruct {
 	key := arrLen
 	var binSearchTestData binSearchStruct
 	binSearchTestData.arr = make([]int, arrLen)
-	binSearchTestData.keys = make([]int, 26)
+	binSearchTestData.keys = make([]int, 27)
 
 	for i := 0; i < len(binSearchTestData.arr); i++ {
 		binSearchTestData.arr[i] = i
 	}
 
-	for i := range binSearchTestData.keys {
+	for i := 0; i < len(binSearchTestData.keys); i++ {
 		key = key / 2
 		binSearchTestData.keys[i] = key
 	}
