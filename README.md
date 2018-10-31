@@ -1,5 +1,5 @@
 # Algorithmik2
-Algorithms practical at TH-Köln
+Algorithms practical at Cologne University of Applied Sciences. 
 
 
 First Task
